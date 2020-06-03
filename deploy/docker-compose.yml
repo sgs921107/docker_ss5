@@ -1,0 +1,32 @@
+# 配置文件版本
+version: "3"
+
+
+# 管理的服务
+services:
+
+    ss5:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: ss5:${SS5_VERSION}
+        container_name: ss5_${SS5_VERSION}
+        ports:
+            - ${REAL_SS5_PORT}:1080
+        volumes:
+            - ${SS5_CONF}:/etc/opt/ss5/ss5.conf:ro
+            - ${SS5_USERS}:/etc/opt/ss5/ss5.passwd:ro
+            - ${SS5_LOGS}:/var/log/ss5:rw
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "200m"
+                max-file: "3"
+        command: 
+            - /bin/bash
+            - -c
+            - |
+              ss5
+              tail -f /dev/null
+        restart: always
+
